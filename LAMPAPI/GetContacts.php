@@ -12,7 +12,7 @@ if ($conn->connect_error)
 } 
 else
 {
-    $stmt = $conn->prepare("SELECT ID, FirstName, LastName, Phone, Email FROM User_Contacts WHERE UserID=?");
+    $stmt = $conn->prepare("SELECT ID, FirstName, LastName, Phone, Email, Favorite FROM User_Contacts WHERE UserID=?");
     $stmt->bind_param("i", $userId);
     $stmt->execute();
 
