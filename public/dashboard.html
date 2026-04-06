@@ -130,10 +130,26 @@ body {
   margin-bottom: 12px;
   background: rgba(255,255,255,0.05);
   cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .contact.active {
   background: rgba(99,102,241,0.25);
+}
+
+.contact-info {
+  flex: 1;
+}
+
+.favorite-btn {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 5px;
+  flex-shrink: 0;
 }
 
 /* Editor */
@@ -149,6 +165,7 @@ body {
 
 .actions {
   display: flex;
+  gap: 10px;
   justify-content: space-between;
 }
 
@@ -195,6 +212,7 @@ body {
         <input id="email" placeholder="Email">
         <input id="phone" placeholder="Phone">
         <div class="actions">
+          <button id="favoriteBtn">Favorite</button>
           <button class="delete" id="deleteBtn">Delete</button>
           <button class="primary" id="saveBtn">Save</button>
         </div>

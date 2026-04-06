@@ -39,6 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const addBtn = document.getElementById("addBtn");
   const saveBtn = document.getElementById("saveBtn");
   const deleteBtn = document.getElementById("deleteBtn");
+  const favoriteBtn = document.getElementById("favoriteBtn");
   const sortBtn = document.getElementById("sortBtn");
 
   //
@@ -62,7 +63,8 @@ document.addEventListener("DOMContentLoaded", function () {
           name: c.FirstName + " " + c.LastName,
           email: c.Email,
           phone: c.Phone,
-          date: c.ID
+          date: c.ID,
+          favorite: c.Favorite === 1 || c.Favorite === "1"
         }));
       }
       else
@@ -90,9 +92,49 @@ document.addEventListener("DOMContentLoaded", function () {
     filtered.forEach(c => {
       const div = document.createElement("div");
       div.className = "contact" + (c === selected ? " active" : "");
-      div.innerHTML = `<strong>${c.name}</strong><br>${c.email || ""}`;
-      div.onclick = () => selectContact(c);
+      
+      const infoDiv = document.createElement("div");
+      infoDiv.className = "contact-info";
+      infoDiv.innerHTML = `<strong>${c.name}</strong><br>${c.email || ""}`;
+      infoDiv.onclick = () => selectContact(c);
+      
+      const favBtn = document.createElement("button");
+      favBtn.className = "favorite-btn";
+      favBtn.textContent = c.favorite ? "★" : "☆";
+      favBtn.onclick = (e) => {
+        e.stopPropagation();
+        toggleFavorite(c);
+      };
+      
+      div.appendChild(infoDiv);
+      div.appendChild(favBtn);
       list.appendChild(div);
+    });
+  }
+
+  function toggleFavorite(c) {
+    const endpoint = c.favorite ? "../LAMPAPI/RemoveFavorite.php" : "../LAMPAPI/AddFavorite.php";
+    
+    fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        contactId: c.id
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if(data.status === "success") {
+        c.favorite = !c.favorite;
+        render();
+      } else {
+        alert("Error updating favorite status");
+      }
+    })
+    .catch(error => {
+      console.error("Error:", error);
     });
   }
 
@@ -103,6 +145,7 @@ document.addEventListener("DOMContentLoaded", function () {
     nameInput.value = c.name || "";
     emailInput.value = c.email || "";
     phoneInput.value = c.phone || "";
+    favoriteBtn.textContent = c.favorite ? "★ Favorite" : "Favorite";
     render();
   }
 
@@ -241,6 +284,11 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("Delete error:", error);
       });
 
+  });
+
+  favoriteBtn.addEventListener("click", function() {
+    if (!selected) return;
+    toggleFavorite(selected);
   });
 
   sortBtn.addEventListener("click", function() {
